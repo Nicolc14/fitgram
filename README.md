@@ -1,4 +1,3 @@
-[index.html.html](https://github.com/user-attachments/files/25735813/index.html.html)
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -2014,7 +2013,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-[10px] font-black text-[#008B8B]">${t} 🏆</span>
-                        <button onclick="event.stopPropagation();toggleFollowBtn(this)" class="border border-black text-black px-3 py-1.5 rounded-full text-[9px] font-black uppercase follow-radar-btn" data-user="${a.user}">Segui</button>
+                        <button onclick="event.stopPropagation();toggleFollowBtn(this)" class="border border-black text-black px-3 py-1.5 rounded-full text-[9px] font-black uppercase follow-radar-btn" data-user="${u}">Segui</button>
                         <button onclick="event.stopPropagation();openChallengeSport('${u}','${sport}')" class="btn-challenge flex items-center gap-1 px-3 py-1.5"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#00F5FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="2" x2="22" y2="22"/><line x1="22" y1="2" x2="2" y2="22"/><line x1="2" y1="5" x2="5" y2="2"/><line x1="19" y1="22" x2="22" y2="19"/></svg></button>
                     </div>
                 </div>`).join('');
@@ -2051,10 +2050,10 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
         let currentUserProfileUser = '';
         let currentUserProfileSport = '';
         // Follow state — persistente
-        let followedUsers = new Set(JSON.parse(FG_STORE.getItem('fg_followed') || '[]'));
+        let followedUsers = new Set(JSON.parse((typeof FG_STORE !== 'undefined' ? FG_STORE.getItem('fg_followed') : null) || '[]'));
 
         function saveFollowed() {
-            FG_STORE.setItem('fg_followed', JSON.stringify([...followedUsers]));
+            if (typeof FG_STORE !== 'undefined') FG_STORE.setItem('fg_followed', JSON.stringify([...followedUsers]));
         }
 
         function isFollowing(user) {
