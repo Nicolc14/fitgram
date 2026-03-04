@@ -1,3 +1,4 @@
+[fitgram_fixed (4).html](https://github.com/user-attachments/files/25742404/fitgram_fixed.4.html)
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -12,6 +13,33 @@
     </style>
     <style>
         :root { --neon: #00F5FF; --dark-green: #004d4d; }
+        /* Fix layout mobile: tutti i pannelli fixed centrati */
+        #splash-screen, #auth-screen, #onboarding-screen,
+        #sidebar, #user-profile-page, #page-users,
+        #chat-match-page, #post-viewer, #register-wall,
+        #result-modal, #trophy-modal {
+            max-width: 430px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            right: auto !important;
+        }
+        #sidebar.open { transform: translateX(-50%) !important; }
+        #user-profile-page.open { transform: translateX(-50%) !important; }
+        #page-users.open { transform: translateX(-50%) translateY(0) !important; }
+        #chat-match-page.open { transform: translateX(-50%) !important; }
+        #post-viewer { transform: translateX(-50%) translateY(100%) !important; }
+        #post-viewer[style*="translateY(0)"] { transform: translateX(-50%) translateY(0) !important; }
+        /* Bottom nav centrata */
+        #bottom-nav {
+            max-width: 430px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            right: auto !important;
+        }
+        /* Profile CTA */
+        #profile-cta {
+            max-width: 382px !important;
+        }
         body { 
             font-family: 'Inter', sans-serif; min-height: 100vh; 
             background: linear-gradient(0deg, #000 0%, #004d4d 25%, #fff 65%); 
@@ -147,7 +175,8 @@
         .user-card:active { background: rgba(255,255,255,0.08); }
 
         /* Post viewer */
-        #post-viewer { max-width: 400px; margin: 0 auto; }        /* Commenti mini-modale */
+        #post-viewer { max-width: 400px; margin: 0 auto; }
+        #post-viewer.pv-open { transform: translateX(-50%) translateY(0) !important; }        /* Commenti mini-modale */
         .comments-box {
             background: #f9f9f9; border-radius: 0 0 2rem 2rem;
             padding: 16px; border-top: 1px solid #eee;
@@ -488,7 +517,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
     var isGuest = false;
     </script>
 </head>
-<body class="max-w-md mx-auto">
+<body style="max-width:430px;margin:0 auto;position:relative;min-height:100vh;overflow-x:hidden;">
 
     <!-- TOAST -->
     <div id="toast"></div>
@@ -698,7 +727,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
         </div>
         <div class="p-5 bg-white/30">
             <div class="flex items-start gap-5">
-                <div class="w-20 h-20 rounded-full border-4 border-cyan-400 p-1 bg-white overflow-hidden flex-shrink-0">
+                <div style="width:80px;height:80px;min-width:80px;border-radius:50%;border:4px solid #22d3ee;padding:4px;background:white;overflow:hidden;flex-shrink:0;">
                     <img id="up-avatar" src="" class="w-full h-full object-cover rounded-full">
                 </div>
                 <div class="flex-1">
@@ -2322,12 +2351,12 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
                 </div>`).join('');
             // Apri con animazione
             viewer.classList.remove('hidden');
-            setTimeout(() => viewer.style.transform = 'translateY(0)', 10);
+            setTimeout(() => viewer.classList.add('pv-open'), 10);
         }
 
         function closeLightbox() {
             const viewer = document.getElementById('post-viewer');
-            viewer.style.transform = 'translateY(100%)';
+            viewer.classList.remove('pv-open');
             setTimeout(() => viewer.classList.add('hidden'), 350);
         }
 
@@ -2568,10 +2597,19 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
                         saved = JSON.parse(store.getItem(key) || 'null');
                     } catch(e) { saved = null; }
                     if (saved && saved.email && saved.pass) {
-                        try { isGuest = false; applyUD(saved); showToast('Bentornato ' + saved.name + '!', 'success'); } catch(e) {}
+                        // Utente già registrato: entra nell'app
+                        try { isGuest = false; applyUD(saved); } catch(e) {}
+                        try { if (typeof switchPage === 'function') switchPage('feed'); } catch(e) {}
+                        try { showToast('Bentornato ' + (saved.name || '') + '!', 'success'); } catch(e) {}
                     } else {
+                        // Nessun account: mostra registrazione
                         var authEl = document.getElementById('auth-screen');
-                        if (authEl) { authEl.style.display = 'flex'; authEl.style.flexDirection = 'column'; authEl.classList.add('visible'); }
+                        if (authEl) {
+                            authEl.style.display = 'flex';
+                            authEl.style.flexDirection = 'column';
+                            authEl.classList.add('visible');
+                        }
+                        if (typeof switchAuthTab === 'function') switchAuthTab('register');
                     }
                 }, 400);
             }
