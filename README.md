@@ -1,4 +1,4 @@
-[fitgram_fixed (5).html](https://github.com/user-attachments/files/25742605/fitgram_fixed.5.html)
+[fitgram_fixed (6).html](https://github.com/user-attachments/files/25742776/fitgram_fixed.6.html)
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -2718,9 +2718,18 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
     }
     function doLogout() {
         if(!confirm('Vuoi uscire dal tuo account?')) return;
-        var sv=JSON.parse(FG_STORE.getItem(FGKEY)||'{}'); delete sv.pass; FG_STORE.setItem(FGKEY,JSON.stringify(sv));
-        var auth=document.getElementById('auth-screen'); if(auth) auth.classList.add('visible');
-        showToast('Logout effettuato','');
+        // Cancella i dati di accesso
+        FG_STORE.removeItem(FGKEY);
+        isGuest = true;
+        // Mostra schermata di accesso
+        var auth = document.getElementById('auth-screen');
+        if (auth) { auth.style.display = 'flex'; auth.style.flexDirection = 'column'; auth.classList.add('visible'); }
+        // Vai al tab login
+        if (typeof switchAuthTab === 'function') switchAuthTab('login');
+        // Chiudi sidebar se aperta
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.remove('open');
+        showToast('Logout effettuato', '');
     }
 
     // ── AUTH & PERSISTENZA ── (FG_STORE, FGKEY, isGuest definiti nell'head)
